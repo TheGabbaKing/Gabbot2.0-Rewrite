@@ -12,7 +12,7 @@ bot = commands.Bot(command_prefix="g.", intents=intents, application_id="1020217
 
 @bot.event
 async def on_ready():
-    print("Gabbot is Online")
+    print(f"{bot.user} is Online")
 
 @bot.event
 async def on_message(ctx):

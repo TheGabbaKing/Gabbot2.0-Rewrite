@@ -1,6 +1,4 @@
-import discord
-import os
-import asyncio
+import discord, requests, uuid, shutil
 from discord import app_commands
 from discord.ext import commands
 
@@ -11,7 +9,7 @@ class Commands(commands.Cog):
     
     @commands.Cog.listener()
     async def on_ready(self):
-        print(f'Commands Cog is ready')
+        print(f'{self.__class__.__name__} Cog is ready')
 
     @commands.command()
     async def sync(self, ctx) -> None:
@@ -39,6 +37,23 @@ class Commands(commands.Cog):
             else:
                 await ctx.channel.send(f"{url[0]}")
             await ctx.delete()
+
+    @commands.command()
+    async def save(self, ctx):
+        try:
+            url = ctx.message.attachments[0].url
+        except IndexError:
+            print("Error: No attachments")
+            await ctx.send("No attachments found!")
+
+        else:
+            if url[0:26] == "https://cdn.discordapp.com":
+                r = requests.get(url, stream=True)
+                fileName = f'files/{str(uuid.uuid4())}' + '.mp4'
+                with open(fileName, 'wb') as outFile:
+                    print("Saving file: " + fileName)
+                    shutil.copyfileobj(r.raw, outFile)
+                    await ctx.send(file=discord.File(f'{fileName}'))
 
 async def setup(bot):
     await bot.add_cog(Commands(bot), guilds=[discord.Object(id=524776650945200138)])
