@@ -27,15 +27,12 @@ async def on_message(ctx):
 @commands.is_owner()
 async def reload(ctx):
     async with ctx.typing():
-        print("trying to reload")
         for ext in os.listdir("./cogs/"):
             if ext.endswith(".py") and not ext.startswith("_"):
                 try:
-                    print("found extensions")
                     await bot.reload_extension(f"cogs.{ext[:-3]}")
                     await ctx.send(f"{ext[:-3]} Cog Reloaded")
                 except Exception as e:
-                    print("didn't find anything")
                     await ctx.send(f"No cogs were reloaded")
                 await asyncio.sleep(0.5)
 
